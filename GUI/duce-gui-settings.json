@@ -1,30 +1,30 @@
 {
     "stay_logged_in": {
         "auto": false,
-        "manual": false
+        "manual": true
     },
     "min_rating": 0.0,
     "title_exclude": [],
     "instructor_exclude": [],
     "languages": {
-        "Arabic": true,
-        "Chinese": true,
-        "Dutch": true,
+        "Arabic": false,
+        "Chinese": false,
+        "Dutch": false,
         "English": true,
-        "French": true,
-        "German": true,
-        "Hindi": true,
-        "Indonesian": true,
-        "Italian": true,
-        "Japanese": true,
-        "Korean": true,
-        "Polish": true,
-        "Portuguese": true,
-        "Romanian": true,
-        "Spanish": true,
-        "Thai": true,
-        "Turkish": true,
-        "Russian": true
+        "French": false,
+        "German": false,
+        "Hindi": false,
+        "Indonesian": false,
+        "Italian": false,
+        "Japanese": false,
+        "Korean": false,
+        "Polish": false,
+        "Portuguese": false,
+        "Romanian": false,
+        "Spanish": false,
+        "Thai": false,
+        "Turkish": false,
+        "Russian": false
     },
     "categories": {
         "Business": true,
@@ -39,7 +39,7 @@
         "Office Productivity": true,
         "Personal Development": true,
         "Photography & Video": true,
-        "Teaching & Academics": true
+        "Teaching & Academics": false
     },
     "sites": {
         "Discudemy": true,
@@ -50,8 +50,8 @@
         "IDownloadCoupons": true,
         "E-next": true
     },
-    "email": "",
-    "password": "",
+    "email": "ngtrphuong@gmail.com",
+    "password": "NgaMocMoon8@1113",
     "save_txt": true,
     "discounted_only": false
 }

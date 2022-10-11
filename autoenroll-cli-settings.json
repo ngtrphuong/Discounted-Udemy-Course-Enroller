@@ -1,0 +1,63 @@
+{
+    "categories": {
+        "Business": true,
+        "Design": true,
+        "Development": true,
+        "Finance & Accounting": false,
+        "Health & Fitness": false,
+        "IT & Software": true,
+        "Lifestyle": false,
+        "Marketing": true,
+        "Music": false,
+        "Office Productivity": false,
+        "Personal Development": true,
+        "Photography & Video": false,
+        "Teaching & Academics": false
+    },
+    "languages": {
+        "Arabic": false,
+        "Chinese": false,
+        "Dutch": false,
+        "English": true,
+        "French": false,
+        "German": false,
+        "Indonesian": false,
+        "Italian": false,
+        "Japanese": false,
+        "Korean": false,
+        "Polish": false,
+        "Portuguese": false,
+        "Romanian": false,
+        "Spanish": false,
+        "Thai": false,
+        "Turkish": false,
+        "Hindi": false,
+        "Russian": false
+    },
+    "sites": {
+        "Couponscorpion": true,
+        "Reddit_UdemyCoupon4U": true,
+        "Discudemy": true,
+        "Udemy Freebies": true,
+        "Tutorial Bar": true,
+        "Real Discount": true,
+        "Course Vania": true,
+        "IDownloadCoupons": true,
+        "E-next": true
+    },
+    "min_rating": 4.0,
+    "instructor_exclude": [
+        "instructor-1",
+        "instructor-2",
+        "more"
+    ],
+    "title_exclude": [
+        "keyword1",
+        "not_case_sensitive",
+        "enjoy_it"
+    ],
+    "email": "",
+    "password": "",
+    "save_txt": true,
+    "discounted_only": true
+}

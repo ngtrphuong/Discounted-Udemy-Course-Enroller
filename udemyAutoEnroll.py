@@ -13,11 +13,116 @@ import requests
 from bs4 import BeautifulSoup as bs
 from tqdm import tqdm
 
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+from subprocess import CREATE_NO_WINDOW # This flag will only be available in windows
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
+
 from colors import *
 
-# DUCE-CLI
-
+# UDEMY-AUTOENROLL-CLI
+        
 # Scraper
+def couponscorpion():
+    global cs_links;
+    cs_links = [];
+    small_all = [];
+    big_all = [];
+    head = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36 Edg/89.0.774.77",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    };
+    op = webdriver.ChromeOptions();
+    op.headless = True;
+    op.add_experimental_option("excludeSwitches",["ignore-certificate-errors"]);
+    op.add_argument('--disable-gpu');
+    op.add_argument('--headless');
+    op.add_argument('--disable-infobars');
+    op.add_argument('--disable-extensions');
+    op.add_argument('--single-process')
+    op.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36 Edg/89.0.774.77");
+    op.add_experimental_option('excludeSwitches', ['enable-logging']);
+    serv = ChromeService(ChromeDriverManager().install());
+    serv.creationflags = CREATE_NO_WINDOW;
+    driver = webdriver.Chrome(service=serv, options=op);
+
+    for page in range(1, 8):
+        r = requests.get("https://couponscorpion.com/category/100-off-coupons/page/" + str(page), headers=head);
+        soup = bs(r.content, "lxml");
+        temp_all = soup.find_all("h2",{"class":"font120 mt0 mb10 mobfont110 lineheight20 moblineheight15"});
+        for item in temp_all:
+            temp = str(item).rsplit('moblineheight15">', 1)[1].split('</h2>')[0];
+            small_all.append(temp);
+        big_all.extend(small_all);
+    cs_bar = tqdm(total=len(big_all), desc="Couponscorpion")
+    for index, item in enumerate(big_all):
+        if (str(item).find(">100% Off") != -1):
+            cs_bar.update(1);
+            title = str(item).rsplit('">100% Off ',1)[1].split('</a>')[0];
+            url = str(item).rsplit('<a href="',1)[1].split('">100% Off')[0];
+            driver.get(url);
+            delay = 10;
+            time.sleep(delay);
+            #try:
+            #    myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.LINK_TEXT, 'GET COUPON CODE')));
+            #    print("The page is ready with the affiliate link!");
+            #except TimeoutException:
+            #    print("Loading took too much time!");
+            r = driver.page_source;
+            soup = bs(r, "lxml")
+            affiliate_location = soup.find("a", {"class": "btn_offer_block re_track_btn"});
+            if (str(affiliate_location) != 'None'):
+                affiliate_link = affiliate_location["href"];
+                #print("\nValue of affiliate_link: \n");
+                #print(affiliate_link);
+                if (str(affiliate_link).find("couponscorpion.com") != -1):
+                    al = driver.get(affiliate_link);
+                    time.sleep(3);
+                    newURL = driver.current_url;
+                    if ('couponCode' in newURL):
+                        couPon = newURL[newURL.index('couponCode') + 11 : newURL.index('couponCode') + 11 + 20];
+                        udemyURL = newURL[0 : newURL.index('couponCode')];
+                    else:
+                        continue;
+                else:
+                    continue;
+            else:
+                continue;
+            couPonURL = str(udemyURL) + 'couponCode=' + str(couPon);
+            if (couPonURL == 'None'):
+                continue;
+            cs_links.append(title + "|:|" + couPonURL);
+        else:
+            continue;
+    cs_bar.close()
+    driver.close()
+def reddit_udemycoupon4u():
+    global ru4u_links
+    ru4u_links = []
+    big_all = []
+    head = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36 Edg/89.0.774.77",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    }
+
+    for page in range(1, 2):
+        r = requests.get("https://www.reddit.com/r/udemycoupon4u/", headers=head)
+        soup = bs(r.content, "html5lib")
+        small_all = soup.find_all("div", {"class":"_292iotee39Lmt0MkQZ2hPV RichTextJSON-root"})
+        big_all.extend(small_all)
+    ru4u_bar = tqdm(total=len(big_all), desc="Reddit_UdemyCoupon4U")
+    for index, item in enumerate(big_all):
+        ru4u_bar.update(1);
+        title = item.find("p",{"class":"_1qeIAgB0cPwnLhDF9XSiJM"}).string;
+        url = item.find("a",{"class":"_3t5uN8xUmg0TOwRCOGQEcU"})["href"];
+        if (url == 'None'):
+            continue;
+        ru4u_links.append(title + "|:|" + url);
+    ru4u_bar.close()
 def discudemy():
     global du_links
     du_links = []
@@ -27,10 +132,10 @@ def discudemy():
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     }
 
-    for page in range(1, 4):
+    for page in range(1, 6):
         r = requests.get("https://www.discudemy.com/all/" + str(page), headers=head)
         soup = bs(r.content, "html5lib")
-        small_all = soup.find_all("div", {"class": "newsimage rh_gr_img"})
+        small_all = soup.find_all("a", {"class": "card-header"})
         big_all.extend(small_all)
     du_bar = tqdm(total=len(big_all), desc="Discudemy")
     for index, item in enumerate(big_all):
@@ -42,13 +147,12 @@ def discudemy():
         du_links.append(title + "|:|" + soup.find("a", id="couponLink").string)
     du_bar.close()
 
-
 def udemy_freebies():
     global uf_links
     uf_links = []
     big_all = []
 
-    for page in range(1, 3):
+    for page in range(1, 6):
         r = requests.get(
             "https://www.udemyfreebies.com/free-udemy-courses/" + str(page)
         )
@@ -73,7 +177,7 @@ def tutorialbar():
     tb_links = []
     big_all = []
 
-    for page in range(1, 4):
+    for page in range(1, 6):
         r = requests.get("https://www.tutorialbar.com/all-courses/page/" + str(page))
         soup = bs(r.content, "html5lib")
         small_all = soup.find_all(
@@ -100,7 +204,7 @@ def real_discount():
     rd_links = []
     big_all = []
 
-    for page in range(1, 3):
+    for page in range(1, 6):
         r = requests.get("https://real.discount/stores/Udemy?page=" + str(page))
         soup = bs(r.content, "html5lib")
         small_all = soup.find_all("div", class_="col-xl-4 col-md-6")
@@ -201,11 +305,13 @@ def enext() -> list:
 
 # Constants
 
-version = "v1.8"
+version = "v1.9"
 
 
 def create_scrape_obj():
     funcs = {
+        "Couponscorpion": threading.Thread(target=couponscorpion, daemon=True),
+        "Reddit_UdemyCoupon4U": threading.Thread(target=reddit_udemycoupon4u, daemon=True),
         "Discudemy": threading.Thread(target=discudemy, daemon=True),
         "Udemy Freebies": threading.Thread(target=udemy_freebies, daemon=True),
         "Tutorial Bar": threading.Thread(target=tutorialbar, daemon=True),
@@ -235,13 +341,11 @@ def cookiejar(
 
 def load_settings():
     try:
-        with open("duce-cli-settings.json") as f:
+        with open("autoenroll-cli-settings.json") as f:
             settings = json.load(f)
 
     except FileNotFoundError:
-        settings = requests.get(
-            "https://raw.githubusercontent.com/techtanic/Discounted-Udemy-Course-Enroller/master/duce-cli-settings.json"
-        ).json()
+        print("Please ensure the autoenroll-cli-settings.json is in the same directory as this python script!...");
 
     title_exclude = "\n".join(settings["title_exclude"])
     instructor_exclude = "\n".join(settings["instructor_exclude"])
@@ -257,7 +361,7 @@ def load_settings():
 
 
 def save_settings():
-    with open("duce-cli-settings.json", "w") as f:
+    with open("autoenroll-cli-settings.json", "w") as f:
         json.dump(settings, f, indent=4)
 
 
@@ -268,7 +372,6 @@ def get_course_id(url):
     if "/course/draft/" in url:
         return False
     soup = bs(r.content, "html5lib")
-
     try:
         courseid = soup.find(
             "div",
@@ -606,6 +709,8 @@ def main1():
         time.sleep(1)
 
         for link_list in [
+            "cs_links",
+            "ru4u_links",
             "du_links",
             "uf_links",
             "tb_links",
