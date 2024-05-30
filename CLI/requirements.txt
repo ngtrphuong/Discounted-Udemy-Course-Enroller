@@ -5,3 +5,4 @@ colorama
 pyopenssl
 tqdm
 cloudscraper
+security==1.2.1
