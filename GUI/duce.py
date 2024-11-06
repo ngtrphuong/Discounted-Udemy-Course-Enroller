@@ -1,6 +1,5 @@
 import json
 import os
-import random
 import re
 import sys
 import threading
@@ -16,6 +15,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 
 from pack.base64 import *
+import secrets
 
 # DUCE
 
@@ -449,7 +449,7 @@ def check_login(client_id, access_token, csrf_token):
         "accept": "application/json, text/plain, */*",
         "x-requested-with": "XMLHttpRequest",
         "x-forwarded-for": str(
-            ".".join(map(str, (random.randint(0, 255) for _ in range(4))))
+            ".".join(map(str, (secrets.SystemRandom().randint(0, 255) for _ in range(4))))
         ),
         "x-udemy-authorization": "Bearer " + access_token,
         "content-type": "application/json;charset=UTF-8",

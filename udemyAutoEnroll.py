@@ -1,6 +1,5 @@
 import json
 import os
-import random
 import re
 import threading
 import time
@@ -23,6 +22,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
 from colors import *
+import secrets
 
 # UDEMY-AUTOENROLL-CLI
         
@@ -485,7 +485,7 @@ def check_login(email, password):
                 "accept": "application/json, text/plain, */*",
                 "x-requested-with": "XMLHttpRequest",
                 "x-forwarded-for": str(
-                    ".".join(map(str, (random.randint(0, 255) for _ in range(4))))
+                    ".".join(map(str, (secrets.SystemRandom().randint(0, 255) for _ in range(4))))
                 ),
                 "x-udemy-authorization": "Bearer " + r.cookies["access_token"],
                 "content-type": "application/json;charset=UTF-8",
@@ -692,7 +692,7 @@ def auto(list_st):
 
 def random_color():
     col = ["green", "yellow", "white"]
-    return random.choice(col)
+    return secrets.choice(col)
 
 
 ##########################################
