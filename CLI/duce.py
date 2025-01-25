@@ -28,7 +28,7 @@ def discudemy():
     }
 
     for page in range(1, 4):
-        r = requests.get("https://www.discudemy.com/all/" + str(page), headers=head)
+        r = requests.get("https://www.discudemy.com/all/" + str(page), headers=head, timeout=60)
         soup = bs(r.content, "html5lib")
         small_all = soup.find_all("div", {"class": "newsimage rh_gr_img"})
         big_all.extend(small_all)
@@ -37,7 +37,7 @@ def discudemy():
         du_bar.update(1)
         title = item.string
         url = item["href"].split("/")[4]
-        r = requests.get("https://www.discudemy.com/go/" + url, headers=head)
+        r = requests.get("https://www.discudemy.com/go/" + url, headers=head, timeout=60)
         soup = bs(r.content, "html5lib")
         du_links.append(title + "|:|" + soup.find("a", id="couponLink").string)
     du_bar.close()
@@ -50,8 +50,8 @@ def udemy_freebies():
 
     for page in range(1, 3):
         r = requests.get(
-            "https://www.udemyfreebies.com/free-udemy-courses/" + str(page)
-        )
+            "https://www.udemyfreebies.com/free-udemy-courses/" + str(page), 
+        timeout=60)
         soup = bs(r.content, "html5lib")
         small_all = soup.find_all("a", {"class": "theme-img"})
         big_all.extend(small_all)
@@ -61,8 +61,8 @@ def udemy_freebies():
         uf_bar.update(1)
         title = item.img["alt"]
         link = requests.get(
-            "https://www.udemyfreebies.com/out/" + item["href"].split("/")[4]
-        ).url
+            "https://www.udemyfreebies.com/out/" + item["href"].split("/")[4], 
+        timeout=60).url
         uf_links.append(title + "|:|" + link)
     uf_bar.close()
 
@@ -74,7 +74,7 @@ def tutorialbar():
     big_all = []
 
     for page in range(1, 4):
-        r = requests.get("https://www.tutorialbar.com/all-courses/page/" + str(page))
+        r = requests.get("https://www.tutorialbar.com/all-courses/page/" + str(page), timeout=60)
         soup = bs(r.content, "html5lib")
         small_all = soup.find_all(
             "h3", class_="mb15 mt0 font110 mobfont100 fontnormal lineheight20"
@@ -86,7 +86,7 @@ def tutorialbar():
         tb_bar.update(1)
         title = item.a.string
         url = item.a["href"]
-        r = requests.get(url)
+        r = requests.get(url, timeout=60)
         soup = bs(r.content, "html5lib")
         link = soup.find("a", class_="btn_offer_block re_track_btn")["href"]
         if "www.udemy.com" in link:
@@ -101,7 +101,7 @@ def real_discount():
     big_all = []
 
     for page in range(1, 3):
-        r = requests.get("https://real.discount/stores/Udemy?page=" + str(page))
+        r = requests.get("https://real.discount/stores/Udemy?page=" + str(page), timeout=60)
         soup = bs(r.content, "html5lib")
         small_all = soup.find_all("div", class_="col-xl-4 col-md-6")
         big_all.extend(small_all)
@@ -111,7 +111,7 @@ def real_discount():
         rd_bar.update(1)
         title = item.a.h3.string
         url = "https://real.discount" + item.a["href"]
-        r = requests.get(url)
+        r = requests.get(url, timeout=60)
         soup = bs(r.content, "html5lib")
         link = soup.find("div", class_="col-xs-12 col-md-12 col-sm-12 text-center").a[
             "href"
@@ -126,7 +126,7 @@ def coursevania():
 
     global cv_links
     cv_links = []
-    r = requests.get("https://coursevania.com/courses/")
+    r = requests.get("https://coursevania.com/courses/", timeout=60)
     soup = bs(r.content, "html5lib")
 
     nonce = json.loads(
@@ -140,8 +140,8 @@ def coursevania():
     r = requests.get(
         "https://coursevania.com/wp-admin/admin-ajax.php?&template=courses/grid&args={%22posts_per_page%22:%2230%22}&action=stm_lms_load_content&nonce="
         + nonce
-        + "&sort=date_high"
-    ).json()
+        + "&sort=date_high", 
+    timeout=60).json()
 
     soup = bs(r["content"], "html5lib")
     small_all = soup.find_all("div", {"class": "stm_lms_courses__single--title"})
@@ -150,7 +150,7 @@ def coursevania():
     for index, item in enumerate(small_all):
         cv_bar.update(1)
         title = item.h5.string
-        r = requests.get(item.a["href"])
+        r = requests.get(item.a["href"], timeout=60)
         soup = bs(r.content, "html5lib")
         cv_links.append(
             title + "|:|" + soup.find("div", {"class": "stm-lms-buy-buttons"}).a["href"]
@@ -165,8 +165,8 @@ def idcoupons():
     big_all = []
     for page in range(1, 6):
         r = requests.get(
-            "https://idownloadcoupon.com/product-category/udemy-2/page/" + str(page)
-        )
+            "https://idownloadcoupon.com/product-category/udemy-2/page/" + str(page), 
+        timeout=60)
         soup = bs(r.content, "html5lib")
         small_all = soup.find_all("a", attrs={"class": "button product_type_external"})
         big_all.extend(small_all)
@@ -187,7 +187,7 @@ def idcoupons():
 def enext() -> list:
     en_links = []
 
-    r = requests.get("https://e-next.in/e/udemycoupons.php")
+    r = requests.get("https://e-next.in/e/udemycoupons.php", timeout=60)
     soup = bs(r.content, "html5lib")
     big_all = soup.find_all("div", {"class": "col-8"})
     en_bar = tqdm(total=len(big_all), desc="E-next")
@@ -240,8 +240,8 @@ def load_settings():
 
     except FileNotFoundError:
         settings = requests.get(
-            "https://raw.githubusercontent.com/techtanic/Discounted-Udemy-Course-Enroller/master/duce-cli-settings.json"
-        ).json()
+            "https://raw.githubusercontent.com/techtanic/Discounted-Udemy-Course-Enroller/master/duce-cli-settings.json", 
+        timeout=60).json()
 
     title_exclude = "\n".join(settings["title_exclude"])
     instructor_exclude = "\n".join(settings["instructor_exclude"])
@@ -262,7 +262,7 @@ def save_settings():
 
 
 def get_course_id(url):
-    r = requests.get(url, allow_redirects=False)
+    r = requests.get(url, allow_redirects=False, timeout=60)
     if r.status_code in (404, 302, 301):
         return False
     if "/course/draft/" in url:
@@ -340,8 +340,8 @@ def remove_duplicates(l):
 
 def update_available():
     if version.removeprefix("v") < requests.get(
-        "https://api.github.com/repos/techtanic/Discounted-Udemy-Course-Enroller/releases/latest"
-    ).json()["tag_name"].removeprefix("v"):
+        "https://api.github.com/repos/techtanic/Discounted-Udemy-Course-Enroller/releases/latest", 
+    timeout=60).json()["tag_name"].removeprefix("v"):
         print(by + fr + "  Update Available  ")
     else:
         return
