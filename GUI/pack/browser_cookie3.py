@@ -596,9 +596,9 @@ class Firefox:
         if not os.path.exists(self.session_file_lz4):
             return
         try:
-            file_obj = open(self.session_file_lz4, 'rb')
-            file_obj.read(8)
-            json_data = json.loads(lz4.block.decompress(file_obj.read()))
+            with open(self.session_file_lz4, 'rb') as file_obj:
+                file_obj.read(8)
+                json_data = json.loads(lz4.block.decompress(file_obj.read()))
         except ValueError as e:
             print('Error parsing firefox session JSON LZ4:', str(e))
         else:
