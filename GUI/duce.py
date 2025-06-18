@@ -16,6 +16,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 
 from pack.base64 import *
+from security import safe_requests
 
 # DUCE
 
@@ -39,7 +40,7 @@ def discudemy():
     }
 
     for page in range(1, 4):
-        r = requests.get("https://www.discudemy.com/all/" + str(page), headers=head)
+        r = safe_requests.get("https://www.discudemy.com/all/" + str(page), headers=head)
         soup = bs(r.content, "html5lib")
         small_all = soup.find_all("a", {"class": "card-header"})
         big_all.extend(small_all)
@@ -51,7 +52,7 @@ def discudemy():
 
         title = item.string
         url = item["href"].split("/")[4]
-        r = requests.get("https://www.discudemy.com/go/" + url, headers=head)
+        r = safe_requests.get("https://www.discudemy.com/go/" + url, headers=head)
         soup = bs(r.content, "html5lib")
         du_links.append(title + "|:|" + soup.find("a", id="couponLink").string)
 
@@ -65,7 +66,7 @@ def udemy_freebies():
     big_all = []
 
     for page in range(1, 3):
-        r = requests.get(
+        r = safe_requests.get(
             "https://www.udemyfreebies.com/free-udemy-courses/" + str(page)
         )
         soup = bs(r.content, "html5lib")
@@ -77,7 +78,7 @@ def udemy_freebies():
     for index, item in enumerate(big_all):
         main_window["pUdemy Freebies"].update(index + 1)
         title = item.img["alt"]
-        link = requests.get(
+        link = safe_requests.get(
             "https://www.udemyfreebies.com/out/" + item["href"].split("/")[4]
         ).url
         uf_links.append(title + "|:|" + link)
@@ -92,7 +93,7 @@ def tutorialbar():
     big_all = []
 
     for page in range(1, 4):
-        r = requests.get("https://www.tutorialbar.com/all-courses/page/" + str(page))
+        r = safe_requests.get("https://www.tutorialbar.com/all-courses/page/" + str(page))
         soup = bs(r.content, "html5lib")
         small_all = soup.find_all(
             "h3", class_="mb15 mt0 font110 mobfont100 fontnormal lineheight20"
@@ -105,7 +106,7 @@ def tutorialbar():
         main_window["pTutorial Bar"].update(index + 1)
         title = item.a.string
         url = item.a["href"]
-        r = requests.get(url)
+        r = safe_requests.get(url)
         soup = bs(r.content, "html5lib")
         link = soup.find("a", class_="btn_offer_block re_track_btn")["href"]
         if "www.udemy.com" in link:
@@ -121,7 +122,7 @@ def real_discount():
     big_all = []
 
     for page in range(1, 3):
-        r = requests.get("https://real.discount/stores/Udemy?page=" + str(page))
+        r = safe_requests.get("https://real.discount/stores/Udemy?page=" + str(page))
         soup = bs(r.content, "html5lib")
         small_all = soup.find_all("div", class_="col-xl-4 col-md-6")
         big_all.extend(small_all)
@@ -132,7 +133,7 @@ def real_discount():
         main_window["pReal Discount"].update(index + 1)
         title = item.a.h3.string
         url = "https://real.discount" + item.a["href"]
-        r = requests.get(url)
+        r = safe_requests.get(url)
         soup = bs(r.content, "html5lib")
         link = soup.find("div", class_="col-xs-12 col-md-12 col-sm-12 text-center").a[
             "href"
@@ -159,7 +160,7 @@ def coursevania():
         ][0].strip("_mlv =	norsecat;\n")
     )["load_content"]
 
-    r = requests.get(
+    r = safe_requests.get(
         "https://coursevania.com/wp-admin/admin-ajax.php?&template=courses/grid&args={%22posts_per_page%22:%2230%22}&action=stm_lms_load_content&nonce="
         + nonce
         + "&sort=date_high"
@@ -172,7 +173,7 @@ def coursevania():
     for index, item in enumerate(small_all):
         main_window["pCourse Vania"].update(index + 1)
         title = item.h5.string
-        r = requests.get(item.a["href"])
+        r = safe_requests.get(item.a["href"])
         soup = bs(r.content, "html5lib")
         cv_links.append(
             title + "|:|" + soup.find("div", {"class": "stm-lms-buy-buttons"}).a["href"]
@@ -187,7 +188,7 @@ def idcoupons():
     idc_links = []
     big_all = []
     for page in range(1, 6):
-        r = requests.get(
+        r = safe_requests.get(
             "https://idownloadcoupon.com/product-category/udemy-2/page/" + str(page)
         )
         soup = bs(r.content, "html5lib")
@@ -292,7 +293,7 @@ def fetch_cookies():
 
 
 def get_course_id(url):
-    r = requests.get(url, allow_redirects=False)
+    r = safe_requests.get(url, allow_redirects=False)
     if r.status_code in (404, 302, 301):
         return False
     if "/course/draft/" in url:
@@ -458,7 +459,7 @@ def check_login(client_id, access_token, csrf_token):
         "dnt": "1",
     }
 
-    r = requests.get(
+    r = safe_requests.get(
         "https://www.udemy.com/api-2.0/contexts/me/?me=True&Config=True", headers=head
     ).json()
     currency = r["Config"]["price_country"]["currency"]
